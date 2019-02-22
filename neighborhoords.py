@@ -13,7 +13,7 @@ from skimage import measure
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 def brute_force_KNN(queries, supports, k):
-    # YOUR CODE
+    """ Select the k nearest neighbours """
     neighborhoods = []
     for query in queries :
         dist = np.linalg.norm(query-supports, axis=1)
@@ -24,6 +24,17 @@ def brute_force_KNN(queries, supports, k):
         neighborhoods.append(sample_idx)
 
     return neighborhoods
+
+def brute_force_spherical(queries, supports, radius):
+    """ Select all the neighbours inside a sphere of given radius"""
+    neighborhoods = []
+    for query in queries :
+        dist = np.linalg.norm(query-supports, axis=1)
+        test = np.where(dist<radius)
+        neighborhoods.append(supports[test[0]])
+    
+    return neighborhoods
+
 
 def dot_product(matrix_1, matrix_2):
     assert(matrix_1.shape[0]==matrix_2.shape[0])
