@@ -8,17 +8,16 @@ A robust 3D IPD based on harris detector
 import itertools
 import scipy
 import numpy as np
-from sklearn.neighbors import KDTree
 from sklearn.decomposition import PCA
-from math import cos, sin, pi, sqrt
+from math import sqrt
 
 import sys
 sys.path.append("C://Users//juliette//Desktop//enpc//3A//S2//Nuage_de_points_et_modélisation_3D//projet//github//utils")
 from ply import write_ply, read_ply
 #from utils.ply import write_ply, read_ply
 
-#import warnings
-#warnings.filterwarnings("ignore")
+import warnings
+warnings.filterwarnings("ignore")
 
 import neighborhoords
 import transformation
@@ -56,7 +55,7 @@ if __name__ == '__main__':
     offset_range = [10**(-4), 10**(-3)]
     
     # Load point cloud
-    file_path = 'C://Users//juliette//Desktop//enpc//3A//S2//Nuage_de_points_et_modélisation_3D//projet//github//data//dragon_normals.ply' # Path of the file
+    file_path = 'C://Users//juliette//Desktop//enpc//3A//S2//Nuage_de_points_et_modélisation_3D//projet//github//data//bunny_normals.ply' # Path of the file
     data = read_ply(file_path)
     points = np.vstack((data['x'], data['y'], data['z'])).T
     normals = np.vstack((data['nx'], data['ny'], data['nz'])).T
@@ -67,10 +66,10 @@ if __name__ == '__main__':
     resp = np.zeros(len(points))
     
     #compute neighborhood
-    neighborhood = neighborhoords.brute_force_KNN(points, points, n_neighbours)
-#    neighborhood = neighborhoords.brute_force_spherical(points, points, n_neighbours)
-    #TODO : use k ring (vert == points)
-#    neighborhood = neighborhoords.k_ring(points, normals, n_neighbours, plot)
+#    neighborhood = neighborhoords.brute_force_KNN(points, n_neighbours)
+#    neighborhood = neighborhoords.brute_force_spherical(points, n_neighbours)
+    neighborhood = neighborhoords.k_ring_delaunay(points, n_neighbours)
+    #TODO : adaptive k
   
     for i in range(len(points)) :
         neighbors = points[neighborhood[i], :]
@@ -139,5 +138,5 @@ if __name__ == '__main__':
             labels_cluster[int(candidate[i, 0])] = 1
           
     # Save the result
-    write_ply('../dragon_harris_IPD.ply', [points, labels_fraction, labels_cluster], ['x', 'y', 'z', 'labels_fraction', 'labels_cluster'])
+    write_ply('../bunny_harris_IPD_kring.ply', [points, labels_fraction, labels_cluster], ['x', 'y', 'z', 'labels_fraction', 'labels_cluster'])
     
