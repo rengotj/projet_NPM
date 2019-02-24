@@ -48,6 +48,7 @@ if __name__ == '__main__':
     #parameters
     plot = False
     n_neighbours = 3
+    delta = 0.025
     k = 0.04
     fraction = 0.1
     cluster_threshold = 0.01
@@ -55,10 +56,10 @@ if __name__ == '__main__':
     offset_range = [10**(-4), 10**(-3)]
     
     # Load point cloud
-    file_path = 'C://Users//juliette//Desktop//enpc//3A//S2//Nuage_de_points_et_modélisation_3D//projet//github//data//bunny_normals.ply' # Path of the file
+    file_path = 'C://Users//juliette//Desktop//enpc//3A//S2//Nuage_de_points_et_modélisation_3D//projet//github//data//bunny.ply' # Path of the file
     data = read_ply(file_path)
     points = np.vstack((data['x'], data['y'], data['z'])).T
-    normals = np.vstack((data['nx'], data['ny'], data['nz'])).T
+#    normals = np.vstack((data['nx'], data['ny'], data['nz'])).T
                        
     #initialisation of the solution
     labels_fraction = np.zeros(len(points))
@@ -68,7 +69,8 @@ if __name__ == '__main__':
     #compute neighborhood
 #    neighborhood = neighborhoords.brute_force_KNN(points, n_neighbours)
 #    neighborhood = neighborhoords.brute_force_spherical(points, n_neighbours)
-    neighborhood = neighborhoords.k_ring_delaunay(points, n_neighbours)
+#    neighborhood = neighborhoords.k_ring_delaunay(points, n_neighbours)
+    neighborhood = neighborhoords.k_ring_delaunay_adaptive(points, delta)
     #TODO : adaptive k
   
     for i in range(len(points)) :
@@ -110,9 +112,6 @@ if __name__ == '__main__':
           
         #Compute response
         resp[i] = fx2*fy2 - fxfy*fxfy - k*(fx2 + fy2)*(fx2 + fy2);
-                                       
-        #Select interest points
-        #Todo : NMS / ANMS
 
     #Select interest points
     #search for local maxima
@@ -138,5 +137,5 @@ if __name__ == '__main__':
             labels_cluster[int(candidate[i, 0])] = 1
           
     # Save the result
-    write_ply('../bunny_harris_IPD_kring.ply', [points, labels_fraction, labels_cluster], ['x', 'y', 'z', 'labels_fraction', 'labels_cluster'])
+    write_ply('../bunny_harris_IPD_kring_adaptive.ply', [points, labels_fraction, labels_cluster], ['x', 'y', 'z', 'labels_fraction', 'labels_cluster'])
     
