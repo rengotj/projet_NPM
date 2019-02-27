@@ -56,10 +56,9 @@ if __name__ == '__main__':
     offset_range = [10**(-4), 10**(-3)]
     
     # Load point cloud
-    file_path = 'C://Users//juliette//Desktop//enpc//3A//S2//Nuage_de_points_et_modélisation_3D//projet//github//data//bunny.ply' # Path of the file
+    file_path = 'C://Users//juliette//Desktop//enpc//3A//S2//Nuage_de_points_et_modélisation_3D//projet//github//data//transformed//bunny_noise_0.00028.ply' # Path of the file
     data = read_ply(file_path)
     points = np.vstack((data['x'], data['y'], data['z'])).T
-#    normals = np.vstack((data['nx'], data['ny'], data['nz'])).T
                        
     #initialisation of the solution
     labels_fraction = np.zeros(len(points))
@@ -71,7 +70,6 @@ if __name__ == '__main__':
 #    neighborhood = neighborhoords.brute_force_spherical(points, n_neighbours)
 #    neighborhood = neighborhoords.k_ring_delaunay(points, n_neighbours)
     neighborhood = neighborhoords.k_ring_delaunay_adaptive(points, delta)
-    #TODO : adaptive k
   
     for i in range(len(points)) :
         neighbors = points[neighborhood[i], :]
@@ -85,11 +83,6 @@ if __name__ == '__main__':
         best_fit_normal = eigenvectors[idx,:]
         
         #rotate the cloud
-        #TODO : corriger rotation
-#        theta = angle(best_fit_normal, np.array([1,0,0])) #angle with x axis
-#        points_rotated = transformation.rotation(points, theta, 2)
-#        theta = angle(best_fit_normal, np.array([0, 0, 1])) #angle with z axis
-#        points_rotated = transformation.rotation(points_rotated, theta, 1)
         for i in range(points.shape[0]):
             points[i, :] = np.dot(np.transpose(eigenvectors), points[i, :])
             
@@ -106,8 +99,8 @@ if __name__ == '__main__':
         
         #Compute the derivative
         #TODO : ajouter integration gaussienne
-        fx2 = m[1, 0]*m[1, 0]  + 2*m[2, 0]*m[2, 0] + 2*m[1, 1]*m[1, 1] #A
-        fy2 = m[1, 0]*m[1, 0]  + 2*m[1, 1]*m[1, 1] + 2*m[0, 2]*m[0, 2] #B
+        fx2 =  m[1, 0]*m[1, 0] + 2*m[2, 0]*m[2, 0] + 2*m[1, 1]*m[1, 1] #A
+        fy2 =  m[1, 0]*m[1, 0] + 2*m[1, 1]*m[1, 1] + 2*m[0, 2]*m[0, 2] #B
         fxfy = m[1, 0]*m[0, 1] + 2*m[2, 0]*m[1, 1] + 2*m[1, 1]*m[0, 2] #C
           
         #Compute response
@@ -137,5 +130,5 @@ if __name__ == '__main__':
             labels_cluster[int(candidate[i, 0])] = 1
           
     # Save the result
-    write_ply('../bunny_harris_IPD_kring_adaptive.ply', [points, labels_fraction, labels_cluster], ['x', 'y', 'z', 'labels_fraction', 'labels_cluster'])
+    write_ply('../bunny_harris_IPD_noise_0.00028.ply', [points, labels_fraction, labels_cluster], ['x', 'y', 'z', 'labels_fraction', 'labels_cluster'])
     
