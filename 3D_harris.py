@@ -56,7 +56,7 @@ if __name__ == '__main__':
     offset_range = [10**(-4), 10**(-3)]
     
     # Load point cloud
-    file_path = 'C://Users//juliette//Desktop//enpc//3A//S2//Nuage_de_points_et_modélisation_3D//projet//github//data//transformed//bunny_noise_0.00028.ply' # Path of the file
+    file_path = 'C://Users//juliette//Desktop//enpc//3A//S2//Nuage_de_points_et_modélisation_3D//projet//github//data//transformed//dragon.ply' # Path of the file
     data = read_ply(file_path)
     points = np.vstack((data['x'], data['y'], data['z'])).T
                        
@@ -71,7 +71,8 @@ if __name__ == '__main__':
 #    neighborhood = neighborhoords.k_ring_delaunay(points, n_neighbours)
     neighborhood = neighborhoords.k_ring_delaunay_adaptive(points, delta)
   
-    for i in range(len(points)) :
+#    for i in range(len(points)) :
+    for i in neighborhood.keys() :
         neighbors = points[neighborhood[i], :]
         points_centred, _ = transformation.centering_centroid(points)
         
@@ -130,5 +131,5 @@ if __name__ == '__main__':
             labels_cluster[int(candidate[i, 0])] = 1
           
     # Save the result
-    write_ply('../bunny_harris_IPD_noise_0.00028.ply', [points, labels_fraction, labels_cluster], ['x', 'y', 'z', 'labels_fraction', 'labels_cluster'])
+    write_ply('../dragon_harris_IPD.ply', [points, labels_fraction, labels_cluster], ['x', 'y', 'z', 'labels_fraction', 'labels_cluster'])
     
