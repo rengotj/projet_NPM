@@ -91,15 +91,11 @@ if __name__ == '__main__':
         points_2D = points[:,:2]-points[i,:2]
         
         #fit a quadratic surface
-        #TODO : other method / correct poly form
         m = polyfit3d(points_2D[:,0], points_2D[:,1], points[:,2], order=2)
         m = m.reshape((3,3))
-#        p = np.polyfit(points_2D[:,0], points_2D[:,1], 2) #Least squares polynomial fit.
-#        p = np.poly1d(p)
-#        print(p)
         
         #Compute the derivative
-        #TODO : ajouter integration gaussienne
+        #TODO : intergration gauss: quadrature hermite gauss ?
         fx2 =  m[1, 0]*m[1, 0] + 2*m[2, 0]*m[2, 0] + 2*m[1, 1]*m[1, 1] #A
         fy2 =  m[1, 0]*m[1, 0] + 2*m[1, 1]*m[1, 1] + 2*m[0, 2]*m[0, 2] #B
         fxfy = m[1, 0]*m[0, 1] + 2*m[2, 0]*m[1, 1] + 2*m[1, 1]*m[0, 2] #C
@@ -110,7 +106,7 @@ if __name__ == '__main__':
     #Select interest points
     #search for local maxima
     candidate = []
-    for i in range(len(points)) :
+    for i in neighborhood.keys() :
         if resp[i] >= np.max(resp[neighborhood[i]]) :
             candidate.append([i, resp[i]])
     #sort by decreasing order

@@ -65,6 +65,12 @@ def noise(points, offset):
         noised_points[i,axis_list[i]] += offset
     return(noised_points)
 
+def resolution(points, n):
+    """ reduce the number of points to n in the point cloud
+    by randomly suppressing points """
+    idx = np.random.randint(0, points.shape[0], n)
+    points_subsampled = points[idx, :]
+    return(points_subsampled)
 # ------------------------------------------------------------------------------------------
 if __name__ == '__main__':
     nb_experiments = 10
@@ -75,7 +81,7 @@ if __name__ == '__main__':
     offset_range = [10**(-4), 10**(-3)]
     
     # Load point cloud
-    file_path = 'C://Users//juliette//Desktop//enpc//3A//S2//Nuage_de_points_et_modélisation_3D//projet//github//data//bunny_normals.ply' # Path of the file
+    file_path = 'C://Users//juliette//Desktop//enpc//3A//S2//Nuage_de_points_et_modélisation_3D//projet//github//data//bunny.ply' # Path of the file
     data = read_ply(file_path)
     points = np.vstack((data['x'], data['y'], data['z'])).T
 
@@ -103,5 +109,13 @@ if __name__ == '__main__':
         points_noised = centering_origin(points_noised, centroid)
         # Save point cloud
         write_ply('../bunny_noise_'+str(offset)+'.ply', [points_noised], ['x', 'y', 'z'])
+
+    #resolution
+    for i in range(nb_experiments):
+        points_subsampled, centroid = centering_centroid(points)
+        points_subsampled = resolution(points_subsampled, 20000)
+        points_subsampled = centering_origin(points_subsampled, centroid)
+        # Save point cloud
+        write_ply('../bunny_subsampled_'+str(i)+'.ply', [points_subsampled], ['x', 'y', 'z'])
 
     print('Done')
