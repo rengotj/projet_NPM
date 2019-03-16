@@ -1,10 +1,10 @@
 import numpy as np
 import math
 
-import sys
-sys.path.append("C://Users//juliette//Desktop//enpc//3A//S2//Nuage_de_points_et_modélisation_3D//projet//github//utils")
-from ply import write_ply, read_ply
-#from utils.ply import write_ply, read_ply
+#import sys
+#sys.path.append("C://Users//juliette//Desktop//enpc//3A//S2//Nuage_de_points_et_modélisation_3D//projet//github//utils")
+#from ply import write_ply, read_ply
+from utils.ply import write_ply, read_ply
 
 
 def centering_centroid(points):
@@ -71,6 +71,7 @@ def resolution(points, n):
     idx = np.random.randint(0, points.shape[0], n)
     points_subsampled = points[idx, :]
     return(points_subsampled)
+
 # ------------------------------------------------------------------------------------------
 if __name__ == '__main__':
     nb_experiments = 10
